@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">AICha</string>
+
+    <!-- Chat Screen -->
+    <string name="chat_title">AI Chat</string>
+    <string name="chat_status_online">En línea</string>
+    <string name="chat_empty_message">Escribe un mensaje para empezar</string>
+    <string name="chat_input_hint">Escribe un mensaje…</string>
+    <string name="chat_send_button">Enviar</string>
+
+    <!-- History Screen -->
+    <string name="history_title">Historial</string>
+    <string name="history_empty">No hay conversaciones guardadas</string>
+    <string name="new_conversation">Nueva</string>
+    <string name="delete_conversation">Eliminar conversación</string>
+</resources>

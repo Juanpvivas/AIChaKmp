@@ -1,0 +1,28 @@
+<journey name="Start New Conversation Journey">
+   <description>
+      Prueba iniciar una nueva conversacion desde el drawer y verificar que el chat se limpia
+   </description>
+   <actions>
+      <action>
+        Verify that the app is showing the chat screen
+      </action>
+      <action>
+        Tap the menu icon to open the drawer
+      </action>
+      <action>
+        Verify that the drawer is open
+      </action>
+      <action>
+        Verify that the "Nueva" button is visible
+      </action>
+      <action>
+        Tap the "Nueva" button
+      </action>
+      <action>
+        Verify that the drawer closes
+      </action>
+      <action>
+        Verify that the chat area is empty (showing the empty state message)
+      </action>
+   </actions>
+</journey>

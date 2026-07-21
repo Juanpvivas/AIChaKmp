@@ -1,0 +1,28 @@
+<journey name="Send Message Journey">
+   <description>
+      Prueba enviar un mensaje de chat y verificar que la UI responde correctamente
+   </description>
+   <actions>
+      <action>
+        Verify that the app is showing the chat screen with the title "AI Chat"
+      </action>
+      <action>
+        Verify that the text input field with hint "Escribe un mensaje…" is visible
+      </action>
+      <action>
+        Tap the text input field
+      </action>
+      <action>
+        Type "hola" into the text input field
+      </action>
+      <action>
+        Tap the send button
+      </action>
+      <action>
+        Verify that the message "hola" appears in the chat as a user message
+      </action>
+      <action>
+        Verify that a loading indicator or AI response appears
+      </action>
+   </actions>
+</journey>

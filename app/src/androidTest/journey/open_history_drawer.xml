@@ -1,0 +1,25 @@
+<journey name="Open History Drawer Journey">
+   <description>
+      Prueba abrir el Navigation Drawer del historial y verificar su contenido
+   </description>
+   <actions>
+      <action>
+        Verify that the app is showing the chat screen with the title "AI Chat"
+      </action>
+      <action>
+        Verify that the menu icon is visible in the top bar
+      </action>
+      <action>
+        Tap the menu icon
+      </action>
+      <action>
+        Verify that the drawer opens and shows the history panel
+      </action>
+      <action>
+        Verify that the "Nueva" (New) button is visible
+      </action>
+      <action>
+        Verify that the list of conversations is visible (or empty state message)
+      </action>
+   </actions>
+</journey>
