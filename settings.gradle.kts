@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AICha"
 include(":app")
+include(":composeApp")
