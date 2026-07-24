@@ -26,9 +26,11 @@ kotlin {
             implementation(libs.openai.client)
             implementation(libs.room.runtime)
             implementation(libs.room.common)
+            implementation(libs.koin.core)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.koin.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
