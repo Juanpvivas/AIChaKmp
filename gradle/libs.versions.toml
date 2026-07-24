@@ -47,6 +47,7 @@ ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.r
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-common = { group = "androidx.room", name = "room-common", version.ref = "room" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "activityCompose" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockkVersion" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbineVersion" }
