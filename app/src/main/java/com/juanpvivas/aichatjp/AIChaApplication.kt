@@ -1,7 +1,13 @@
 package com.juanpvivas.aichatjp
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import com.juanpvivas.aichatjp.di.androidContext
+import com.juanpvivas.aichatjp.di.initKoin
 
-@HiltAndroidApp
-class AIChaApplication : Application()
+class AIChaApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        androidContext = this
+        initKoin()
+    }
+}
