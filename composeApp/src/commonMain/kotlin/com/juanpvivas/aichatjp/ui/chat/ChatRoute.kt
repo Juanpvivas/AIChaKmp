@@ -7,7 +7,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ChatRoute(
-    conversationId: Long
+    conversationId: Long,
+    onNavigateToHistory: () -> Unit = {}
 ) {
     val viewModel: ChatViewModel = koinViewModel()
 

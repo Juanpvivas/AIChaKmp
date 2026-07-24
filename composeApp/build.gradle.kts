@@ -31,6 +31,7 @@ kotlin {
             implementation(libs.lifecycle.viewmodel.compose.multiplatform)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
+            implementation(libs.navigation.compose)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
