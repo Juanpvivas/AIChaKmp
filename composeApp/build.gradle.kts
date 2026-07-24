@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -23,6 +24,8 @@ kotlin {
             implementation(compose.material3)
             implementation(libs.kotlinx.datetime)
             implementation(libs.openai.client)
+            implementation(libs.room.runtime)
+            implementation(libs.room.common)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
