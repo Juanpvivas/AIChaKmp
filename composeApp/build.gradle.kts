@@ -1,17 +1,40 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    id("com.android.kotlin.multiplatform.library")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.multiplatform)
 }
 
 kotlin {
-    android {
-        compileSdk { version = release(36) }
-        namespace = "com.juanpvivas.aichatjp.composeapp"
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
 
     iosArm64()
     iosSimulatorArm64()
     iosX64()
 
-    sourceSets {}
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+        }
+    }
+}
+
+android {
+    namespace = "com.juanpvivas.aichatjp.composeapp"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 29
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
