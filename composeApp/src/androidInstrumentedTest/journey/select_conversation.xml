@@ -1,0 +1,25 @@
+<journey name="Select Conversation Journey">
+   <description>
+      Prueba seleccionar una conversacion del historial y verificar que se cargan sus mensajes
+   </description>
+   <actions>
+      <action>
+        Verify that the app is showing the chat screen
+      </action>
+      <action>
+        Tap the menu icon to open the drawer
+      </action>
+      <action>
+        Verify that the drawer is open
+      </action>
+      <action>
+        Tap on the first conversation in the list
+      </action>
+      <action>
+        Verify that the drawer closes
+      </action>
+      <action>
+        Verify that the messages of the selected conversation are displayed in the chat
+      </action>
+   </actions>
+</journey>
