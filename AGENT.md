@@ -65,6 +65,7 @@ Tests unitarios en `composeApp/src/commonTest/kotlin/...` (espejo exacto del paq
 - Patrón Route/Screen: `Route.kt` es el único archivo con acceso al `ViewModel`; `Screen.kt` es stateless (solo params + `UiState` + lambdas), compatible con `@Preview` en ambas plataformas.
 - Cero strings hardcodeados en Composables: todo texto vía recursos multiplatform (`stringResource(Res.string.identificador)`), no `strings.xml` Android-only.
 - Dispatchers siempre inyectados vía `DispatcherProvider`, nunca `Dispatchers.IO` hardcodeado.
+- Sin literales sueltos (URLs, IDs de modelo, timeouts): `const val` en `private companion object` del mismo archivo (ver `docs/ARCHITECTURE.md` §13).
 - `Flow` expuesto desde ViewModel usa `stateIn(scope, SharingStarted.WhileSubscribed(5_000), initial)`.
 - Errores de red/API se normalizan a un tipo de dominio (`AppError`) antes de llegar al ViewModel.
 - Mapeo vía extension functions `to<Destino>()` (`toDomain()`, `toEntity()`, `toDto()`), no clases `Mapper` con estado.

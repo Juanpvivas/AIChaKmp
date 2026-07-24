@@ -353,6 +353,9 @@ Además de los tests unitarios/instrumentados, el proyecto usa **Journeys** (fun
 
 - **Linting:** ktlint + detekt en pre-commit/CI, sobre todo el código Kotlin (`commonMain`, `androidMain`, `iosMain`, tests). Bloquean merge si fallan.
 - **Naming:** `PascalCase` para clases/composables, `camelCase` para funciones/variables, sufijos consistentes (`Repository`, `UseCase`, `ViewModel`, `UiState`, `Screen`, `Route`, `Entity`, `Dto`).
+- **Sin literales sueltos:** valores de configuración (URLs base, IDs de modelo, timeouts, etc.)
+  nunca van como literales inline; se declaran como `const val` en un `private companion object`
+  dentro del mismo archivo que los usa (ver `ChatRemoteDataSourceImpl.kt` como referencia).
 - **Verificación de compilación:** antes de dar por cerrado cualquier cambio de código, compilar ambos targets:
   - Android: `./gradlew :composeApp:compileDebugKotlinAndroid`
   - iOS: `./gradlew :composeApp:compileKotlinIosSimulatorArm64` (o el framework completo, según el cambio)
