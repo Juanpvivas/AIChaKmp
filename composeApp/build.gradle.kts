@@ -22,11 +22,15 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(libs.kotlinx.datetime)
             implementation(libs.openai.client)
             implementation(libs.room.runtime)
             implementation(libs.room.common)
             implementation(libs.koin.core)
+            implementation(libs.lifecycle.viewmodel.compose.multiplatform)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
         }
         androidMain.dependencies {
             implementation(libs.ktor.client.okhttp)
