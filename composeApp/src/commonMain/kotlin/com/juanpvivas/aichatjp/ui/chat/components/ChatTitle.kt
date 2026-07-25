@@ -21,6 +21,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.juanpvivas.aichatjp.ui.theme.Emerald400
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_status_online
+import aicha.composeapp.generated.resources.chat_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ChatTitle() {
@@ -42,7 +46,7 @@ fun ChatTitle() {
         Spacer(Modifier.width(12.dp))
         Column {
             Text(
-                text = "AI Chat",
+                text = stringResource(Res.string.chat_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -55,7 +59,7 @@ fun ChatTitle() {
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
-                    text = "Online",
+                    text = stringResource(Res.string.chat_status_online),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

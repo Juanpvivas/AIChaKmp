@@ -10,6 +10,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.new_conversation_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun NewConversationButton(
@@ -26,7 +29,7 @@ fun NewConversationButton(
             modifier = Modifier.padding(end = 8.dp)
         )
         Text(
-            text = "New Conversation",
+            text = stringResource(Res.string.new_conversation_title),
             style = MaterialTheme.typography.labelLarge
         )
     }

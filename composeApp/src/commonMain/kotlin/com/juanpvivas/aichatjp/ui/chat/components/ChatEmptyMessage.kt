@@ -7,6 +7,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_empty_message
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ChatEmptyMessage(modifier: Modifier = Modifier) {
@@ -15,7 +18,7 @@ fun ChatEmptyMessage(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "Send a message to get started",
+            text = stringResource(Res.string.chat_empty_message),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

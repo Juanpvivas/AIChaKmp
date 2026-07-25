@@ -11,6 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.juanpvivas.aichatjp.domain.model.Conversation
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.history_empty_conversations
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HistoryDrawerContent(
@@ -30,7 +33,7 @@ fun HistoryDrawerContent(
             )
         } else if (conversations.isEmpty()) {
             Text(
-                text = "No conversations yet",
+                text = stringResource(Res.string.history_empty_conversations),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .padding(16.dp),

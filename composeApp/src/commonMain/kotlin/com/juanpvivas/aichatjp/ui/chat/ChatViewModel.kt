@@ -53,9 +53,7 @@ class ChatViewModel(
 
             sendMessageUseCase(conversationId, content)
                 .onFailure { error ->
-                    _uiState.value = ChatUiState.Error(
-                        error.message ?: "Unknown error"
-                    )
+                    _uiState.value = ChatUiState.Error(error.message)
                 }
         }
     }
