@@ -14,8 +14,8 @@
 		3E9ABE163014F5CB00457000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F60002 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60003 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A1B2C3D4E5F60010 /* Config.xcconfig.template */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Config.xcconfig.template"; sourceTree = "<group>"; };
-		A1B2C3D4E5F60012 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Config.xcconfig"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60010 /* Config.xcconfig.template */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig.template; sourceTree = "<group>"; };
+		A1B2C3D4E5F60012 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -35,7 +35,7 @@
 			children = (
 				A1B2C3D4E5F60002 /* App.swift */,
 				A1B2C3D4E5F60010 /* Config.xcconfig.template */,
-				A1B2C3D4E5F60011 /* Info.plist */,
+				A1B2C3D4E5F60011,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -114,7 +114,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode";
 		};
 /* End PBXShellScriptBuildPhase section */
 

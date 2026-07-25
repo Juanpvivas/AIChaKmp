@@ -1,6 +1,7 @@
 package com.juanpvivas.aichatjp.di
 
 import androidx.room.Room
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.juanpvivas.aichatjp.data.local.database.AiChaDatabase
 import org.koin.dsl.module
 import platform.Foundation.NSDocumentDirectory
@@ -20,6 +21,7 @@ val iosPlatformModule =
                 ) as List<NSURL>
             val dbPath = urls.first().path + "/aicha_database"
             Room.databaseBuilder<AiChaDatabase>(name = dbPath)
+                .setDriver(BundledSQLiteDriver())
                 .build()
         }
     }

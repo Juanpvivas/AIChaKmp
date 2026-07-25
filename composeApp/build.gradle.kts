@@ -50,6 +50,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.sqlite.bundled)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -75,6 +76,9 @@ android {
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
 }
 
 detekt {

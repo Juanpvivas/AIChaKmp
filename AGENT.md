@@ -90,6 +90,42 @@ Para cambios que toquen `commonMain`, compilar **ambos** targets antes de dar el
 
 **Nunca** hardcodear la key en código o archivos versionados, en ninguna plataforma.
 
+## Cómo validar que la app corre en iOS
+
+El build de Android compilando no garantiza nada sobre iOS: son toolchains separadas (Gradle vs Xcode) y varios problemas solo aparecen en runtime, no en compilación. Antes de dar por cerrada una feature que tocó `commonMain`, `iosMain` o `iosApp/`:
+
+1. **Cerrar Xcode** si hay ediciones pendientes en `iosApp/iosApp.xcodeproj/project.pbxproj` hechas a mano (por un agente, por ejemplo). Xcode reescribe el `.pbxproj` completo al abrir/guardar el proyecto; si queda abierto mientras alguien más lo edita como texto, las ediciones se pisan entre sí y el archivo puede terminar con referencias duplicadas o colgantes (ver Troubleshooting).
+2. **Build & Run** desde Xcode (`Cmd+R`) contra un simulador, o headless:
+   ```bash
+   xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp \
+     -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
+   ```
+   (La fase de Run Script del target invoca `./gradlew :composeApp:embedAndSignAppleFrameworkForXcode`, así que esto también valida que `commonMain`/`iosMain` compilan.)
+3. **Confirmar que la app realmente carga** (no solo que compila): abrir el chat, ver que no haya pantalla en blanco ni crash inmediato al arrancar. Un build exitoso no significa que Koin/Room/Compose se inicialicen bien — varios de los bugs de esta sección solo truenan en el primer frame de composición.
+4. **Si crashea y no hay Xcode a mano (o el proceso quedó pausado en el debugger)**, se puede diagnosticar desde terminal:
+   ```bash
+   xcrun simctl list devices booted                      # obtener el UDID del simulador
+   ls ~/Library/Logs/DiagnosticReports/ | grep iosApp     # crash reports (.ips) del SO
+   xcrun simctl launch --console-pty <UDID> com.juanpvivas.aichatjp.iosApp
+   ```
+   El `.ips` del sistema solo confirma el tipo de señal (normalmente `SIGABRT`/`EXC_CRASH`), pero **no** trae el mensaje real: Kotlin/Native imprime `Uncaught Kotlin exception: ...` por stderr, no queda registrado en el `.ips`. `simctl launch --console-pty` relanza la app mostrando ese stderr en vivo, con el stack Kotlin completo y las cadenas `Caused by:` anidadas.
+5. **Si el error es un `org.koin.core.error.InstanceCreationException`**, no te quedes con el primer mensaje (suele ser genérico, ej. "no se pudo crear el ViewModel") — bajá hasta el **último** `Caused by:` de la cadena; ahí está la causa real.
+
+## Troubleshooting: problemas conocidos de build/runtime en iOS
+
+Bugs reales encontrados poniendo a andar la app en iOS por primera vez (ninguno tenía que ver con lógica de negocio — todo era wiring de la toolchain Gradle↔Xcode↔Koin↔Room). Antes de investigar desde cero un problema nuevo, chequear si encaja en esta lista:
+
+| Síntoma | Causa | Fix |
+|---|---|---|
+| `No such module 'composeApp'` al compilar Swift | Gradle no genera el framework, o Xcode no lo compila antes de las fuentes Swift | En `composeApp/build.gradle.kts`, cada target iOS necesita `it.binaries.framework { baseName = "composeApp"; isStatic = true }`. En el target de Xcode, una fase **Run Script** (antes de "Compile Sources") con `./gradlew :composeApp:embedAndSignAppleFrameworkForXcode`, y `ENABLE_USER_SCRIPT_SANDBOXING = NO` |
+| `Unable to open base configuration reference file .../Config.xcconfig` (o `Info.plist`) | El `path` de un `PBXGroup` se acumula con el de sus grupos padre al resolver la ubicación en disco; si el archivo referenciado no vive en esa ruta acumulada, Xcode no lo encuentra | Verificar que el grupo que contiene `Config.xcconfig`/`Info.plist` resuelva al mismo directorio físico (normalmente junto al `.xcodeproj`, **no** dentro de `iosApp/iosApp/` donde vive `App.swift`) |
+| Linker: `Undefined symbol: _main` | Al `AppDelegate` en `App.swift` le falta el atributo de entry point | Agregar `@UIApplicationMain` (o `@main`) a la clase `AppDelegate` |
+| Crash inmediato al arrancar, stack menciona `PlistSanityCheck.uikit.kt` | Compose Multiplatform exige `CADisableMinimumFrameDurationOnPhone` en `Info.plist` (soporte ProMotion) y aborta a propósito si falta | Agregar `<key>CADisableMinimumFrameDurationOnPhone</key><true/>` a `iosApp/Info.plist` |
+| Pantalla en blanco / `InstanceCreationException` resolviendo cualquier ViewModel | Koin nunca se inicializó en iOS | Confirmar que `InitKoinKt.doInitKoin(config: nil)` se llama en `AppDelegate.application(_:didFinishLaunchingWithOptions:)` **antes** de crear el `MainViewController`. (`doInitKoin`, no `initKoin`: Kotlin/Native antepone `do` a funciones exportadas que empiezan con `init`, porque Objective-C/ARC trata los métodos `init*` como inicializadores especiales) |
+| `InstanceCreationException` en cadena → `Cannot create a RoomDatabase without providing a SQLiteDriver via setDriver()` | Room Multiplatform no tiene driver por defecto en iOS (a diferencia de Android) | En el builder de Room de `iosMain/.../di/PlatformModule.kt`, agregar `.setDriver(BundledSQLiteDriver())`. Requiere la dependencia `androidx.sqlite:sqlite-bundled` en `iosMain.dependencies` — **ojo, versiona por separado de Room** (ej. Room 2.7.1 usa `androidx.sqlite` 2.5.0, no 2.7.1; confirmar la versión correcta en el árbol de dependencias transitivo si Gradle no la resuelve) |
+| `InstanceCreationException` en cadena → `Cannot find the associated androidx.room.RoomDatabaseConstructor for X. Is Room annotation processor correctly configured?` | Falta el mecanismo `RoomDatabaseConstructor` que Room KMP necesita para targets no-JVM, y/o KSP no corre para los targets iOS | En `commonMain`: `@ConstructedBy(XConstructor::class)` sobre la clase `@Database`, más `expect object XConstructor : RoomDatabaseConstructor<X> { override fun initialize(): X }`. En `build.gradle.kts`: `add("kspIosArm64", libs.room.compiler)`, `add("kspIosSimulatorArm64", ...)`, `add("kspIosX64", ...)` (no alcanza con `kspAndroid`) |
+| El `.pbxproj` queda con referencias duplicadas o colgantes después de abrir/editar el proyecto en Xcode | Xcode reescribe el `.pbxproj` completo al abrir/guardar; ediciones manuales concurrentes (agente + Xcode abierto a la vez) se pisan entre sí | Cerrar Xcode antes de que un agente edite el `.pbxproj` a mano; validar con `plutil -lint iosApp/iosApp.xcodeproj/project.pbxproj` después de cada edición; commitear en cuanto se confirme que compila y corre |
+
 ## Testing
 
 - Preferir **fakes** sobre mocks en `commonTest`: MockK es JVM-only y no corre en `iosTest`. MockK solo en `androidUnitTest`, para lo puntual que no se pueda fakear.
