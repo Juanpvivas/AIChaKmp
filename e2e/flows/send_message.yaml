@@ -1,0 +1,9 @@
+appId: com.juanpvivas.aichatjp.iosApp
+---
+- launchApp
+- assertVisible: "AI Chat"
+- tapOn: "Escribe un mensaje…"
+- inputText: "hola"
+- tapOn: "Send"
+- assertVisible: "hola"
+- waitForAnimationToEnd
