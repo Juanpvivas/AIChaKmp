@@ -34,6 +34,8 @@
 			isa = PBXGroup;
 			children = (
 				A1B2C3D4E5F60002 /* App.swift */,
+				A1B2C3D4E5F60010 /* Config.xcconfig.template */,
+				A1B2C3D4E5F60011 /* Info.plist */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
