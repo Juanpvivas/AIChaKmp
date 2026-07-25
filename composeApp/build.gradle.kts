@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.detekt)
+    alias(libs.plugins.kover)
 }
 
 kotlin {
@@ -93,6 +94,10 @@ detekt {
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
     jvmTarget = "17"
+    reports {
+        // Formato checkstyle-compatible: lo consume reviewdog en CI para comentar el PR inline.
+        xml.required.set(true)
+    }
 }
 
 ktlint {
@@ -102,6 +107,11 @@ ktlint {
         exclude("**/resourceGenerator/**")
         exclude("**/commonResClass/**")
         exclude("**/commonMainResourceAccessors/**")
+    }
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        // reviewdog en CI consume este reporte para comentar el PR inline.
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
     }
 }
 
