@@ -20,28 +20,29 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val commonModule = module {
-    singleOf(::ChatRemoteDataSourceImpl) bind ChatRemoteDataSource::class
+val commonModule =
+    module {
+        singleOf(::ChatRemoteDataSourceImpl) bind ChatRemoteDataSource::class
 
-    single {
-        val database: AiChaDatabase = get()
-        database.conversationDao()
+        single {
+            val database: AiChaDatabase = get()
+            database.conversationDao()
+        }
+
+        single {
+            val database: AiChaDatabase = get()
+            database.messageDao()
+        }
+
+        singleOf(::ChatRepositoryImpl) bind ChatRepository::class
+        singleOf(::ConversationRepositoryImpl) bind ConversationRepository::class
+
+        factoryOf(::SendMessageUseCase)
+        factoryOf(::ObserveConversationHistoryUseCase)
+        factoryOf(::CreateConversationUseCase)
+        factoryOf(::ObserveConversationsUseCase)
+        factoryOf(::DeleteConversationUseCase)
+
+        viewModelOf(::ChatViewModel)
+        viewModelOf(::HistoryViewModel)
     }
-
-    single {
-        val database: AiChaDatabase = get()
-        database.messageDao()
-    }
-
-    singleOf(::ChatRepositoryImpl) bind ChatRepository::class
-    singleOf(::ConversationRepositoryImpl) bind ConversationRepository::class
-
-    factoryOf(::SendMessageUseCase)
-    factoryOf(::ObserveConversationHistoryUseCase)
-    factoryOf(::CreateConversationUseCase)
-    factoryOf(::ObserveConversationsUseCase)
-    factoryOf(::DeleteConversationUseCase)
-
-    viewModelOf(::ChatViewModel)
-    viewModelOf(::HistoryViewModel)
-}

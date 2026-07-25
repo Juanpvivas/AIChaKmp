@@ -7,19 +7,18 @@ import com.juanpvivas.aichatjp.data.remote.dto.SendMessageResponse
 import com.juanpvivas.aichatjp.data.remote.dto.UsageDto
 import com.juanpvivas.aichatjp.domain.model.ChatMessage as DomainChatMessage
 
-fun String.toChatMessage(role: ChatRole = ChatRole.User): ChatMessage =
-    ChatMessage(role = role, content = this)
+fun String.toChatMessage(role: ChatRole = ChatRole.User): ChatMessage = ChatMessage(role = role, content = this)
 
 fun DomainChatMessage.toApiChatMessage(): ChatMessage =
     ChatMessage(
         role = if (isFromUser) ChatRole.User else ChatRole.Assistant,
-        content = content
+        content = content,
     )
 
 fun SendMessageResponse.toDomain(): DomainChatMessage =
     DomainChatMessage(
         content = content,
-        isFromUser = false
+        isFromUser = false,
     )
 
 fun Usage?.toDto(): UsageDto? =
@@ -27,6 +26,6 @@ fun Usage?.toDto(): UsageDto? =
         UsageDto(
             promptTokens = it.promptTokens ?: 0,
             completionTokens = it.completionTokens ?: 0,
-            totalTokens = it.totalTokens ?: 0
+            totalTokens = it.totalTokens ?: 0,
         )
     }

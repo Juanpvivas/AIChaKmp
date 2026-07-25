@@ -7,24 +7,25 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class CreateConversationUseCaseTest {
-
     private val fakeRepository = FakeConversationRepository()
     private val useCase = CreateConversationUseCase(fakeRepository)
 
     @Test
-    fun createConversation_success_returnsId() = runTest {
-        val result = useCase("Test conversation")
+    fun createConversation_success_returnsId() =
+        runTest {
+            val result = useCase("Test conversation")
 
-        assertTrue(result.isSuccess)
-        assertEquals(1L, result.getOrNull())
-    }
+            assertTrue(result.isSuccess)
+            assertEquals(1L, result.getOrNull())
+        }
 
     @Test
-    fun createConversation_returnsSequentialIds() = runTest {
-        val id1 = useCase("First").getOrNull()
-        val id2 = useCase("Second").getOrNull()
+    fun createConversation_returnsSequentialIds() =
+        runTest {
+            val id1 = useCase("First").getOrNull()
+            val id2 = useCase("Second").getOrNull()
 
-        assertEquals(1L, id1)
-        assertEquals(2L, id2)
-    }
+            assertEquals(1L, id1)
+            assertEquals(2L, id2)
+        }
 }

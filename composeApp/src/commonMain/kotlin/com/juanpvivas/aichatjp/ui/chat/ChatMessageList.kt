@@ -14,14 +14,15 @@ import com.juanpvivas.aichatjp.ui.chat.components.MessageBubble
 @Composable
 fun ChatMessageList(
     messages: List<ChatMessage>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 8.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        reverseLayout = true
+        reverseLayout = true,
     ) {
         items(messages.reversed()) { message ->
             MessageBubble(message = message)

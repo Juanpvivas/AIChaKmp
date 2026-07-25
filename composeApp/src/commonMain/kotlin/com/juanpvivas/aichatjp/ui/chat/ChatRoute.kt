@@ -10,7 +10,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ChatRoute(
     conversationId: Long,
-    onNavigateToHistory: () -> Unit = {}
+    onNavigateToHistory: () -> Unit = {},
 ) {
     val chatViewModel: ChatViewModel = koinViewModel()
     val historyViewModel: HistoryViewModel = koinViewModel()
@@ -35,6 +35,6 @@ fun ChatRoute(
         },
         onDeleteConversation = { conversationId ->
             historyViewModel.deleteConversation(conversationId)
-        }
+        },
     )
 }

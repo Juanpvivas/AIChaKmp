@@ -1,5 +1,7 @@
 package com.juanpvivas.aichatjp.ui.chat
 
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_menu
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -26,8 +28,6 @@ import com.juanpvivas.aichatjp.domain.model.Conversation
 import com.juanpvivas.aichatjp.ui.chat.components.ChatContent
 import com.juanpvivas.aichatjp.ui.chat.components.ChatTitle
 import com.juanpvivas.aichatjp.ui.history.components.HistoryDrawerContent
-import aicha.composeapp.generated.resources.Res
-import aicha.composeapp.generated.resources.chat_menu
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
@@ -41,7 +41,7 @@ fun ChatScreen(
     onConversationSelected: (Long) -> Unit,
     onNewConversation: () -> Unit,
     onDeleteConversation: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -61,10 +61,10 @@ fun ChatScreen(
                         onNewConversation()
                         scope.launch { drawerState.close() }
                     },
-                    onDeleteConversation = onDeleteConversation
+                    onDeleteConversation = onDeleteConversation,
                 )
             }
-        }
+        },
     ) {
         Scaffold(
             modifier = modifier,
@@ -76,14 +76,15 @@ fun ChatScreen(
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 Icon(
                                     imageVector = Icons.Default.Menu,
-                                    contentDescription = stringResource(Res.string.chat_menu)
+                                    contentDescription = stringResource(Res.string.chat_menu),
                                 )
                             }
                         },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            titleContentColor = MaterialTheme.colorScheme.onSurface
-                        )
+                        colors =
+                            TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                            ),
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
@@ -94,17 +95,18 @@ fun ChatScreen(
                     Surface(color = MaterialTheme.colorScheme.surface) {
                         ChatInputBar(
                             onSend = onSendMessage,
-                            modifier = Modifier
-                                .navigationBarsPadding()
-                                .imePadding()
+                            modifier =
+                                Modifier
+                                    .navigationBarsPadding()
+                                    .imePadding(),
                         )
                     }
                 }
-            }
+            },
         ) { innerPadding ->
             ChatContent(
                 uiState = uiState,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
             )
         }
     }

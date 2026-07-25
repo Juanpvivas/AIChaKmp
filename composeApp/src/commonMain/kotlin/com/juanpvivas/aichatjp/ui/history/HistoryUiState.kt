@@ -4,9 +4,11 @@ import com.juanpvivas.aichatjp.domain.model.Conversation
 
 sealed interface HistoryUiState {
     data object Empty : HistoryUiState
+
     data class Success(
         val conversations: List<Conversation>,
-        val isLoading: Boolean = false
+        val isLoading: Boolean = false,
     ) : HistoryUiState
+
     data class Error(val message: String) : HistoryUiState
 }

@@ -1,5 +1,7 @@
 package com.juanpvivas.aichatjp.ui.history.components
 
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.history_empty_conversations
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,8 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.juanpvivas.aichatjp.domain.model.Conversation
-import aicha.composeapp.generated.resources.Res
-import aicha.composeapp.generated.resources.history_empty_conversations
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -22,27 +22,29 @@ fun HistoryDrawerContent(
     onConversationSelected: (Conversation) -> Unit,
     onNewConversation: () -> Unit,
     onDeleteConversation: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         if (isLoading) {
             CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp),
             )
         } else if (conversations.isEmpty()) {
             Text(
                 text = stringResource(Res.string.history_empty_conversations),
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else {
             androidx.compose.foundation.lazy.LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 items(conversations.size) { index ->
                     val conversation = conversations[index]
@@ -50,7 +52,7 @@ fun HistoryDrawerContent(
                         conversation = conversation,
                         onClick = { onConversationSelected(conversation) },
                         onDelete = { onDeleteConversation(conversation.id) },
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                     )
                 }
             }

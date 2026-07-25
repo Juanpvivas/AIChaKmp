@@ -14,7 +14,6 @@ import com.juanpvivas.aichatjp.data.remote.mapper.toDto
 import kotlin.time.Duration.Companion.seconds
 
 class ChatRemoteDataSourceImpl : ChatRemoteDataSource {
-
     private companion object {
         const val GROQ_BASE_URL = "https://api.groq.com/openai/v1/"
         const val MODEL_ID = "llama-3.3-70b-versatile"
@@ -23,22 +22,24 @@ class ChatRemoteDataSourceImpl : ChatRemoteDataSource {
 
     private val openAI: OpenAI by lazy {
         OpenAI(
-            config = OpenAIConfig(
-                token = groqApiKey(),
-                host = OpenAIHost(baseUrl = GROQ_BASE_URL),
-                timeout = com.aallam.openai.api.http.Timeout(socket = TIMEOUT_SECONDS.seconds),
-                engine = httpClientEngine()
-            )
+            config =
+                OpenAIConfig(
+                    token = groqApiKey(),
+                    host = OpenAIHost(baseUrl = GROQ_BASE_URL),
+                    timeout = com.aallam.openai.api.http.Timeout(socket = TIMEOUT_SECONDS.seconds),
+                    engine = httpClientEngine(),
+                ),
         )
     }
 
     override suspend fun sendMessage(messages: List<String>): SendMessageResponse {
         val chatMessages = messages.map { it.toChatMessage() }
 
-        val request = ChatCompletionRequest(
-            model = ModelId(MODEL_ID),
-            messages = chatMessages
-        )
+        val request =
+            ChatCompletionRequest(
+                model = ModelId(MODEL_ID),
+                messages = chatMessages,
+            )
 
         val completion = openAI.chatCompletion(request)
         val choice = completion.choices.first()
@@ -46,7 +47,7 @@ class ChatRemoteDataSourceImpl : ChatRemoteDataSource {
         return SendMessageResponse(
             content = choice.message.content ?: "",
             model = completion.model.id,
-            usage = completion.usage.toDto()
+            usage = completion.usage.toDto(),
         )
     }
 }

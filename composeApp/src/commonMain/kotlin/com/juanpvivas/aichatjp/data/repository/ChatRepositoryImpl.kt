@@ -16,18 +16,20 @@ import kotlin.time.Clock
 
 class ChatRepositoryImpl(
     private val remoteDataSource: ChatRemoteDataSource,
-    private val messageDao: MessageDao
+    private val messageDao: MessageDao,
 ) : ChatRepository {
-
-    override suspend fun sendMessage(conversationId: Long, content: String): Result<ChatMessage> {
+    override suspend fun sendMessage(
+        conversationId: Long,
+        content: String,
+    ): Result<ChatMessage> {
         return try {
             messageDao.insertMessage(
                 MessageEntity(
                     conversationId = conversationId,
                     content = content,
                     isFromUser = true,
-                    timestamp = Clock.System.now().toEpochMilliseconds()
-                )
+                    timestamp = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
 
             val history = messageDao.getMessagesByConversationSync(conversationId)
@@ -40,8 +42,8 @@ class ChatRepositoryImpl(
                     conversationId = conversationId,
                     content = response.content,
                     isFromUser = false,
-                    timestamp = Clock.System.now().toEpochMilliseconds()
-                )
+                    timestamp = Clock.System.now().toEpochMilliseconds(),
+                ),
             )
 
             Result.success(response.toDomain().copy(conversationId = conversationId))
@@ -60,7 +62,7 @@ class ChatRepositoryImpl(
     override suspend fun getMessagesSync(conversationId: Long): Result<List<ChatMessage>> {
         return try {
             Result.success(
-                messageDao.getMessagesByConversationSync(conversationId).map { it.toDomain() }
+                messageDao.getMessagesByConversationSync(conversationId).map { it.toDomain() },
             )
         } catch (e: CancellationException) {
             throw e
@@ -69,7 +71,8 @@ class ChatRepositoryImpl(
         }
     }
 
-    private fun Throwable.toAppError(): AppError = AppError.Unknown(
-        message ?: this::class.simpleName ?: "Unknown error"
-    )
+    private fun Throwable.toAppError(): AppError =
+        AppError.Unknown(
+            message ?: this::class.simpleName ?: "Unknown error",
+        )
 }
