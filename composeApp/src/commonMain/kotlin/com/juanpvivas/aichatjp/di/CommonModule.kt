@@ -8,6 +8,7 @@ import com.juanpvivas.aichatjp.data.repository.ConversationRepositoryImpl
 import com.juanpvivas.aichatjp.domain.repository.ChatRepository
 import com.juanpvivas.aichatjp.domain.repository.ConversationRepository
 import com.juanpvivas.aichatjp.domain.usecase.CreateConversationUseCase
+import com.juanpvivas.aichatjp.domain.usecase.DeleteConversationUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationHistoryUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationsUseCase
 import com.juanpvivas.aichatjp.domain.usecase.SendMessageUseCase
@@ -39,6 +40,7 @@ val commonModule = module {
     factoryOf(::ObserveConversationHistoryUseCase)
     factoryOf(::CreateConversationUseCase)
     factoryOf(::ObserveConversationsUseCase)
+    factoryOf(::DeleteConversationUseCase)
 
     viewModelOf(::ChatViewModel)
     viewModelOf(::HistoryViewModel)

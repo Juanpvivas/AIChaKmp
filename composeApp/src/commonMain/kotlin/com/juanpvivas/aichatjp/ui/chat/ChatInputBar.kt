@@ -1,82 +1,125 @@
 package com.juanpvivas.aichatjp.ui.chat
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun ChatInputBar(
-    onSendMessage: (String) -> Unit,
+    onSend: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var text by remember { mutableStateOf("") }
-    val keyboardController = LocalSoftwareKeyboardController.current
+    val canSend = text.isNotBlank()
 
-    Surface(
-        modifier = modifier,
-        tonalElevation = 3.dp
+    val sendBg by animateColorAsState(
+        targetValue = if (canSend) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        },
+        label = "send-bg"
+    )
+    val sendTint by animateColorAsState(
+        targetValue = if (canSend) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        label = "send-tint"
+    )
+
+    fun submit() {
+        if (text.isNotBlank()) {
+            onSend(text.trim())
+            text = ""
+        }
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        TextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            placeholder = { Text("Type a message...") },
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        if (text.isNotBlank()) {
-                            onSendMessage(text)
-                            text = ""
-                            keyboardController?.hide()
-                        }
-                    },
-                    enabled = text.isNotBlank()
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Send",
-                        tint = if (text.isNotBlank()) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
+        Surface(
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            shape = RoundedCornerShape(24.dp),
+            tonalElevation = 2.dp,
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                if (text.isEmpty()) {
+                    Text(
+                        text = "Type a message...",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
-            },
-            shape = RoundedCornerShape(24.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = {
-                if (text.isNotBlank()) {
-                    onSendMessage(text)
-                    text = ""
-                    keyboardController?.hide()
-                }
-            }),
-            maxLines = 5
-        )
+                BasicTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    textStyle = LocalTextStyle.current.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize
+                    ),
+                    cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                    maxLines = 5,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                    keyboardActions = KeyboardActions(onSend = { submit() }),
+                    modifier = Modifier.heightIn(min = 24.dp)
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .clip(CircleShape)
+                .background(sendBg)
+                .clickable(enabled = canSend) { submit() },
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.Send,
+                contentDescription = "Send",
+                tint = sendTint,
+                modifier = Modifier.size(22.dp)
+            )
+        }
     }
 }

@@ -2,15 +2,16 @@ package com.juanpvivas.aichatjp.ui.chat.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,7 +32,13 @@ fun MessageBubble(
     modifier: Modifier = Modifier
 ) {
     val isUser = message.isFromUser
-    val alignment = if (isUser) Arrangement.End else Arrangement.Start
+
+    val bubbleShape = if (isUser) {
+        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 6.dp)
+    } else {
+        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 6.dp, bottomEnd = 20.dp)
+    }
+
     val bubbleColor = if (isUser) {
         MaterialTheme.colorScheme.primary
     } else {
@@ -40,61 +47,66 @@ fun MessageBubble(
     val textColor = if (isUser) {
         MaterialTheme.colorScheme.onPrimary
     } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+        MaterialTheme.colorScheme.onSurface
     }
-    val shape = RoundedCornerShape(
-        topStart = 16.dp,
-        topEnd = 16.dp,
-        bottomStart = if (isUser) 16.dp else 4.dp,
-        bottomEnd = if (isUser) 4.dp else 16.dp
-    )
 
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = alignment,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.Bottom
     ) {
         if (!isUser) {
-            AssistantAvatar(modifier = Modifier.padding(end = 8.dp))
+            AssistantAvatar()
         }
 
-        Column(horizontalAlignment = if (isUser) Alignment.End else Alignment.Start) {
+        Column(
+            horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
+        ) {
             Surface(
-                shape = shape,
-                color = bubbleColor
+                color = bubbleColor,
+                shape = bubbleShape,
+                tonalElevation = if (isUser) 0.dp else 1.dp,
+                modifier = Modifier
+                    .padding(start = if (isUser) 0.dp else 8.dp)
+                    .widthIn(max = 300.dp)
             ) {
                 Text(
                     text = message.content,
-                    modifier = Modifier.padding(12.dp),
                     color = textColor,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
                 )
             }
-
             Text(
                 text = formatTimestamp(message.timestamp),
-                modifier = Modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                modifier = Modifier.padding(
+                    top = 4.dp,
+                    start = if (isUser) 0.dp else 12.dp,
+                    end = if (isUser) 4.dp else 0.dp
+                )
             )
         }
     }
 }
 
 @Composable
-private fun AssistantAvatar(modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier.size(32.dp),
-        shape = CircleShape,
-        color = MaterialTheme.colorScheme.primaryContainer
+private fun AssistantAvatar() {
+    Box(
+        modifier = Modifier
+            .size(32.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer),
+        contentAlignment = Alignment.Center
     ) {
         Icon(
-            imageVector = Icons.Default.AutoAwesome,
+            imageVector = Icons.Rounded.AutoAwesome,
             contentDescription = null,
-            modifier = Modifier
-                .size(18.dp)
-                .padding(4.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.size(18.dp)
         )
     }
 }
