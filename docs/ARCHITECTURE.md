@@ -280,7 +280,18 @@ ui/
   - Android: `startKoin { androidContext(this@AIChaApplication); modules(commonModule, androidPlatformModule) }` en la `Application`.
   - iOS: función `fun initKoin()` expuesta desde `commonMain`/`iosMain`, invocada una vez desde `App.swift` al arrancar.
 - Repositorios y use cases expuestos vía interfaz/factory, nunca instanciados a mano en `ui/`, para permitir fakes en tests.
-- Scoping: singletons para el cliente HTTP y la instancia de Room; factory (nueva instancia) para ViewModels y use cases.
+
+### 9.1 Qué builder de Koin usar según el tipo
+
+| Tipo | Builder | Ejemplo | Por qué |
+|---|---|---|---|
+| `ViewModel` (`ui/<feature>/`) | `viewModelOf` | `viewModelOf(::ChatViewModel)` | DSL dedicado de `koin-compose-viewmodel`: integra con el `ViewModelStore` de la plataforma (Android/iOS), se limpia solo al salir de la pantalla y sobrevive recomposición/cambios de configuración. **Nunca** `singleOf` (lo convierte en singleton de toda la app: nunca se limpia, arrastra estado entre pantallas) ni `factoryOf` (no se integra con el `ViewModelStore`: se crearía una instancia nueva por cada inyección, incluso dentro de la misma pantalla). |
+| Repositorios (`data/repository/*Impl`), cliente Ktor, instancia de Room, DAOs | `singleOf(::Impl) bind Interface::class` | `singleOf(::ChatRepositoryImpl) bind ChatRepository::class` | Estado o recursos costosos de crear (conexión HTTP, DB) que deben vivir toda la app y compartirse entre pantallas. |
+| Use cases (`domain/usecase/`) | `factoryOf` | `factoryOf(::SendMessageUseCase)` | Son *stateless* (solo orquestan una llamada a repositorio); una instancia nueva por inyección es barata y evita compartir estado por accidente entre ViewModels. |
+
+- **Consumo desde la UI:** siempre `koinViewModel()` (no `koinInject()` ni `get()`) para resolver un ViewModel dentro de un `@Composable`; el único lugar que lo hace es `Route.kt` (ver §8, patrón Route/Screen).
+- Resolución en constructor (`viewModelOf`/`factoryOf`/`singleOf` sobre una referencia de función) en vez de bloques `single { Impl(get(), get()) }` a mano, salvo que la construcción necesite lógica extra (ej. builders de plataforma como Room, ver `databaseModule`).
+- Nunca instanciar un `ViewModel`, repositorio o use case con `new`/constructor directo desde `ui/` — siempre vía Koin, incluso en código legado en migración.
 
 ---
 
