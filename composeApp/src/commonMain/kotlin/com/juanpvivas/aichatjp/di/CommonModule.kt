@@ -11,8 +11,11 @@ import com.juanpvivas.aichatjp.domain.usecase.CreateConversationUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationHistoryUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationsUseCase
 import com.juanpvivas.aichatjp.domain.usecase.SendMessageUseCase
+import com.juanpvivas.aichatjp.ui.chat.ChatViewModel
+import com.juanpvivas.aichatjp.ui.history.HistoryViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -36,4 +39,7 @@ val commonModule = module {
     factoryOf(::ObserveConversationHistoryUseCase)
     factoryOf(::CreateConversationUseCase)
     factoryOf(::ObserveConversationsUseCase)
+
+    viewModelOf(::ChatViewModel)
+    viewModelOf(::HistoryViewModel)
 }
