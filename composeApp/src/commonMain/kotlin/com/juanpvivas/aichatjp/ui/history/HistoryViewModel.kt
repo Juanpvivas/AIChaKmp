@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juanpvivas.aichatjp.domain.model.Conversation
 import com.juanpvivas.aichatjp.domain.usecase.CreateConversationUseCase
+import com.juanpvivas.aichatjp.domain.usecase.DeleteConversationUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class HistoryViewModel(
     private val observeConversationsUseCase: ObserveConversationsUseCase,
-    private val createConversationUseCase: CreateConversationUseCase
+    private val createConversationUseCase: CreateConversationUseCase,
+    private val deleteConversationUseCase: DeleteConversationUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HistoryUiState>(HistoryUiState.Empty)
@@ -38,6 +40,12 @@ class HistoryViewModel(
     fun createConversation(title: String) {
         viewModelScope.launch {
             createConversationUseCase(title)
+        }
+    }
+
+    fun deleteConversation(conversationId: Long) {
+        viewModelScope.launch {
+            deleteConversationUseCase(conversationId)
         }
     }
 }

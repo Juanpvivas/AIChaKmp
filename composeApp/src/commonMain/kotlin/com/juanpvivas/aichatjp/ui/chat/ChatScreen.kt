@@ -1,62 +1,108 @@
 package com.juanpvivas.aichatjp.ui.chat
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.juanpvivas.aichatjp.domain.model.ChatMessage
+import com.juanpvivas.aichatjp.domain.model.Conversation
 import com.juanpvivas.aichatjp.ui.chat.components.ChatContent
+import com.juanpvivas.aichatjp.ui.chat.components.ChatTitle
+import com.juanpvivas.aichatjp.ui.history.components.HistoryDrawerContent
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen(
     uiState: ChatUiState,
+    historyConversations: List<Conversation>,
+    isHistoryLoading: Boolean,
     onSendMessage: (String) -> Unit,
+    onConversationSelected: (Long) -> Unit,
+    onNewConversation: () -> Unit,
+    onDeleteConversation: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("AICha") }
-            )
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                HistoryDrawerContent(
+                    conversations = historyConversations,
+                    isLoading = isHistoryLoading,
+                    onConversationSelected = { conversation ->
+                        onConversationSelected(conversation.id)
+                        scope.launch { drawerState.close() }
+                    },
+                    onNewConversation = {
+                        onNewConversation()
+                        scope.launch { drawerState.close() }
+                    },
+                    onDeleteConversation = onDeleteConversation
+                )
+            }
         }
-    ) { paddingValues ->
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
-        ) {
-            when (uiState) {
-                is ChatUiState.Empty -> {
-                    Text(
-                        text = "Start a conversation",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+    ) {
+        Scaffold(
+            modifier = modifier,
+            topBar = {
+                Column {
+                    TopAppBar(
+                        title = { ChatTitle() },
+                        navigationIcon = {
+                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu"
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            titleContentColor = MaterialTheme.colorScheme.onSurface
+                        )
                     )
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
-                is ChatUiState.Success -> {
-                    ChatContent(
-                        messages = uiState.messages,
-                        isLoading = uiState.isLoading,
-                        onSendMessage = onSendMessage
-                    )
-                }
-                is ChatUiState.Error -> {
-                    Text(
-                        text = uiState.message,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+            },
+            bottomBar = {
+                Column {
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    Surface(color = MaterialTheme.colorScheme.surface) {
+                        ChatInputBar(
+                            onSend = onSendMessage,
+                            modifier = Modifier
+                                .navigationBarsPadding()
+                                .imePadding()
+                        )
+                    }
                 }
             }
+        ) { innerPadding ->
+            ChatContent(
+                uiState = uiState,
+                modifier = Modifier.padding(innerPadding)
+            )
         }
     }
 }

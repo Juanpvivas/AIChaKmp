@@ -3,6 +3,7 @@ package com.juanpvivas.aichatjp.ui.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.juanpvivas.aichatjp.domain.model.ChatMessage
+import com.juanpvivas.aichatjp.domain.usecase.CreateConversationUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationHistoryUseCase
 import com.juanpvivas.aichatjp.domain.usecase.SendMessageUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,8 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val observeConversationHistoryUseCase: ObserveConversationHistoryUseCase
+    private val observeConversationHistoryUseCase: ObserveConversationHistoryUseCase,
+    private val createConversationUseCase: CreateConversationUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ChatUiState>(ChatUiState.Empty)
@@ -35,13 +37,20 @@ class ChatViewModel(
     }
 
     fun sendMessage(content: String) {
-        val conversationId = currentConversationId ?: return
-        val currentState = _uiState.value
-        if (currentState is ChatUiState.Success) {
-            _uiState.value = currentState.copy(isLoading = true)
-        }
-
         viewModelScope.launch {
+            val conversationId = currentConversationId ?: run {
+                val title = content.take(50)
+                val result = createConversationUseCase(title)
+                val id = result.getOrNull() ?: return@launch
+                currentConversationId = id
+                loadConversation(id)
+                id
+            }
+
+            _uiState.update { state ->
+                if (state is ChatUiState.Success) state.copy(isLoading = true) else state
+            }
+
             sendMessageUseCase(conversationId, content)
                 .onFailure { error ->
                     _uiState.value = ChatUiState.Error(
