@@ -33,6 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_input_hint
+import aicha.composeapp.generated.resources.chat_send_button
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ChatInputBar(
@@ -85,7 +89,7 @@ fun ChatInputBar(
             ) {
                 if (text.isEmpty()) {
                     Text(
-                        text = "Type a message...",
+                        text = stringResource(Res.string.chat_input_hint),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyLarge
                     )
@@ -116,7 +120,7 @@ fun ChatInputBar(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.Send,
-                contentDescription = "Send",
+                contentDescription = stringResource(Res.string.chat_send_button),
                 tint = sendTint,
                 modifier = Modifier.size(22.dp)
             )

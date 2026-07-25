@@ -9,6 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.juanpvivas.aichatjp.domain.model.Conversation
 import com.juanpvivas.aichatjp.ui.history.components.HistoryDrawerContent
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.history_empty_conversations
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HistoryScreen(
@@ -25,7 +28,7 @@ fun HistoryScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No conversations yet",
+                    text = stringResource(Res.string.history_empty_conversations),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

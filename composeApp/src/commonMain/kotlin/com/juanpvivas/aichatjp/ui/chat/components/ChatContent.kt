@@ -10,6 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.juanpvivas.aichatjp.ui.chat.ChatMessageList
 import com.juanpvivas.aichatjp.ui.chat.ChatUiState
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_error_unknown
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ChatContent(
@@ -38,7 +41,7 @@ fun ChatContent(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = uiState.message,
+                    text = uiState.message ?: stringResource(Res.string.chat_error_unknown),
                     color = MaterialTheme.colorScheme.error
                 )
             }

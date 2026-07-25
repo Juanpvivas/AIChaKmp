@@ -26,7 +26,10 @@ import com.juanpvivas.aichatjp.domain.model.Conversation
 import com.juanpvivas.aichatjp.ui.chat.components.ChatContent
 import com.juanpvivas.aichatjp.ui.chat.components.ChatTitle
 import com.juanpvivas.aichatjp.ui.history.components.HistoryDrawerContent
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_menu
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +76,7 @@ fun ChatScreen(
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 Icon(
                                     imageVector = Icons.Default.Menu,
-                                    contentDescription = "Menu"
+                                    contentDescription = stringResource(Res.string.chat_menu)
                                 )
                             }
                         },

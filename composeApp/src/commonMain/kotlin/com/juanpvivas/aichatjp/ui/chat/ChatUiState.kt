@@ -8,5 +8,5 @@ sealed interface ChatUiState {
         val messages: List<ChatMessage>,
         val isLoading: Boolean = false
     ) : ChatUiState
-    data class Error(val message: String) : ChatUiState
+    data class Error(val message: String? = null) : ChatUiState
 }

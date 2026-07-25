@@ -20,6 +20,9 @@ import com.juanpvivas.aichatjp.domain.model.Conversation
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.delete_conversation
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HistoryItem(
@@ -54,7 +57,7 @@ fun HistoryItem(
             IconButton(onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(Res.string.delete_conversation),
                     tint = MaterialTheme.colorScheme.error
                 )
             }
