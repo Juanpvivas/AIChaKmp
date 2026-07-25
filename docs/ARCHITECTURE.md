@@ -323,7 +323,7 @@ ui/
 | Específico Android (si no se puede fakear en común) | `androidUnitTest` | JUnit + MockK | Casos que dependan de detalles JVM/Android puntuales |
 | UI Compose (Android) | `androidInstrumentedTest` | Compose Testing | Estados principales renderizados correctamente, interacciones clave |
 | Flujos end-to-end (Android) | `androidInstrumentedTest` | Android CLI + Journeys (Gemini) | Journeys en lenguaje natural que navegan la app como lo haría un usuario real (ver §12.2) — herramienta Android-only |
-| UI/E2E iOS | Pendiente (ver §14) | XCUITest (a evaluar) | Sin cobertura automatizada equivalente a Journeys todavía |
+| UI/E2E iOS | Pendiente (ver §16) | Maestro (recomendado) | YAML declarativo, cross-platform, similar filosofía a Journeys (ver spike en `docs/SPIKE-ios-e2e-testing.md`) |
 
 - **Preferir fakes sobre mocks** en `commonTest`, ya que MockK es JVM-only y no está disponible en `iosTest`. Un mock real multiplatform (si se necesita) puede evaluarse con librerías como `mokkery`, pero el default del proyecto es usar fakes escritos a mano.
 - Los fakes/mocks compartidos entre features se agrupan en un paquete de testing común (ej. `commonTest/.../testutil/` o `data/repository/fake/`) para no duplicarlos.
@@ -404,7 +404,7 @@ Pipeline mínimo sugerido (a adaptar al proveedor real). A diferencia del pipeli
 
 - [ ] Estrategia de expiración/límite del historial de conversaciones (¿se guarda indefinidamente? ¿hay límite de mensajes o de conversaciones?).
 - [ ] Comportamiento ante error de la API de Groq a mitad de una respuesta en streaming (si se implementa streaming a futuro).
-- [ ] Herramienta de validación E2E para iOS equivalente a Journeys (XCUITest u otra) — hoy la validación de flujos críticos en iOS es manual.
+- [x] Herramienta de validación E2E para iOS equivalente a Journeys — **Recomendación: adoptar Maestro** (ver `docs/SPIKE-ios-e2e-testing.md`). YAML declarativo, cross-platform, similar filosofía a Journeys. Implementación pendiente.
 - [ ] Confirmar librería de logging multiplatform definitiva (Kermit vs. logger propio `expect`/`actual`).
 - [ ] Evaluar cifrado de la base de datos local (Room) si el historial se considera dato sensible.
 - [ ] Plan de migración incremental: orden en que se migran las features existentes (Chat, History) de Hilt/Android-only a Koin/`commonMain`, y cómo conviven ambos enfoques durante la transición.
