@@ -1,6 +1,7 @@
 import UIKit
 import composeApp
 
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
@@ -8,6 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        InitKoinKt.doInitKoin(config: nil)
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.rootViewController = MainViewControllerKt.MainViewController()
         window?.makeKeyAndVisible()
