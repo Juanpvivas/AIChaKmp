@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {
@@ -65,4 +67,38 @@ android {
 
 dependencies {
     add("kspAndroid", libs.room.compiler)
+}
+
+detekt {
+    config.setFrom("$rootDir/detekt.yml")
+    source.setFrom(
+        "src/commonMain/kotlin",
+        "src/androidMain/kotlin",
+        "src/iosMain/kotlin",
+        "src/commonTest/kotlin",
+        "src/androidUnitTest/kotlin",
+    )
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    jvmTarget = "17"
+}
+
+ktlint {
+    filter {
+        exclude("**/build/**")
+        exclude("**/generated/**")
+        exclude("**/resourceGenerator/**")
+        exclude("**/commonResClass/**")
+        exclude("**/commonMainResourceAccessors/**")
+    }
+}
+
+tasks.matching {
+    it.name.startsWith("ktlint") &&
+        it.name.contains("Android") &&
+        !it.name.contains("Main") &&
+        !it.name.contains("Test")
+}.configureEach {
+    enabled = false
 }

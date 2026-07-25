@@ -12,19 +12,19 @@ import com.juanpvivas.aichatjp.ui.history.HistoryRoute
 @Composable
 fun AppNavGraph(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
         navController = navController,
         startDestination = Routes.CHAT,
-        modifier = modifier
+        modifier = modifier,
     ) {
         composable(Routes.CHAT) {
             ChatRoute(
                 conversationId = 0L,
                 onNavigateToHistory = {
                     navController.navigate(Routes.HISTORY)
-                }
+                },
             )
         }
 
@@ -39,7 +39,7 @@ fun AppNavGraph(
                     navController.navigate(Routes.CHAT) {
                         popUpTo(Routes.CHAT) { inclusive = true }
                     }
-                }
+                },
             )
         }
     }

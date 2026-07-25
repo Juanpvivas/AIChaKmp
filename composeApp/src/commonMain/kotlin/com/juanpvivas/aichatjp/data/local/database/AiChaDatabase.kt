@@ -10,9 +10,10 @@ import com.juanpvivas.aichatjp.data.local.entity.MessageEntity
 @Database(
     entities = [ConversationEntity::class, MessageEntity::class],
     version = 1,
-    exportSchema = false
+    exportSchema = false,
 )
 abstract class AiChaDatabase : RoomDatabase() {
     abstract fun conversationDao(): ConversationDao
+
     abstract fun messageDao(): MessageDao
 }

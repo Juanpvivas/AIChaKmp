@@ -1,5 +1,7 @@
 package com.juanpvivas.aichatjp.ui.history
 
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.history_empty_conversations
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -9,8 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.juanpvivas.aichatjp.domain.model.Conversation
 import com.juanpvivas.aichatjp.ui.history.components.HistoryDrawerContent
-import aicha.composeapp.generated.resources.Res
-import aicha.composeapp.generated.resources.history_empty_conversations
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -19,18 +19,18 @@ fun HistoryScreen(
     onConversationSelected: (Conversation) -> Unit,
     onNewConversation: () -> Unit,
     onDeleteConversation: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     when (uiState) {
         is HistoryUiState.Empty -> {
             Box(
                 modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = stringResource(Res.string.history_empty_conversations),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -41,18 +41,18 @@ fun HistoryScreen(
                 onConversationSelected = onConversationSelected,
                 onNewConversation = onNewConversation,
                 onDeleteConversation = onDeleteConversation,
-                modifier = modifier
+                modifier = modifier,
             )
         }
         is HistoryUiState.Error -> {
             Box(
                 modifier = modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = uiState.message,
                     color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }

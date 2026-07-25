@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ConversationRepository {
     fun getConversations(): Flow<List<Conversation>>
+
     suspend fun createConversation(title: String): Result<Long>
+
     suspend fun deleteConversation(conversationId: Long): Result<Unit>
 }

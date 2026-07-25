@@ -12,9 +12,8 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 
 class ConversationRepositoryImpl(
-    private val conversationDao: ConversationDao
+    private val conversationDao: ConversationDao,
 ) : ConversationRepository {
-
     override fun getConversations(): Flow<List<Conversation>> =
         conversationDao.getAllConversations().map { entities ->
             entities.map { it.toDomain() }
@@ -27,9 +26,9 @@ class ConversationRepositoryImpl(
                     ConversationEntity(
                         title = title,
                         createdAt = Clock.System.now().toEpochMilliseconds(),
-                        updatedAt = Clock.System.now().toEpochMilliseconds()
-                    )
-                )
+                        updatedAt = Clock.System.now().toEpochMilliseconds(),
+                    ),
+                ),
             )
         } catch (e: CancellationException) {
             throw e
@@ -49,7 +48,8 @@ class ConversationRepositoryImpl(
         }
     }
 
-    private fun Throwable.toAppError(): AppError = AppError.Unknown(
-        message ?: this::class.simpleName ?: "Unknown error"
-    )
+    private fun Throwable.toAppError(): AppError =
+        AppError.Unknown(
+            message ?: this::class.simpleName ?: "Unknown error",
+        )
 }

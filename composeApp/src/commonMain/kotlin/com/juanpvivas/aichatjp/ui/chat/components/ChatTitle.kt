@@ -1,5 +1,8 @@
 package com.juanpvivas.aichatjp.ui.chat.components
 
+import aicha.composeapp.generated.resources.Res
+import aicha.composeapp.generated.resources.chat_status_online
+import aicha.composeapp.generated.resources.chat_title
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,26 +24,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.juanpvivas.aichatjp.ui.theme.Emerald400
-import aicha.composeapp.generated.resources.Res
-import aicha.composeapp.generated.resources.chat_status_online
-import aicha.composeapp.generated.resources.chat_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ChatTitle() {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
-            modifier = Modifier
-                .size(40.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            contentAlignment = Alignment.Center
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 imageVector = Icons.Rounded.AutoAwesome,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(22.dp),
             )
         }
         Spacer(Modifier.width(12.dp))
@@ -48,20 +49,21 @@ fun ChatTitle() {
             Text(
                 text = stringResource(Res.string.chat_title),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier
-                        .size(7.dp)
-                        .clip(CircleShape)
-                        .background(Emerald400)
+                    modifier =
+                        Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(Emerald400),
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(
                     text = stringResource(Res.string.chat_status_online),
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }

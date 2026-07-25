@@ -8,5 +8,5 @@ data class ChatMessage(
     val conversationId: Long = 0,
     val content: String,
     val isFromUser: Boolean,
-    val timestamp: Instant = Clock.System.now()
+    val timestamp: Instant = Clock.System.now(),
 )

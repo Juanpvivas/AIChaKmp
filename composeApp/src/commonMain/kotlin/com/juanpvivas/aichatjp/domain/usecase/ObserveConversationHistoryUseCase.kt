@@ -5,8 +5,7 @@ import com.juanpvivas.aichatjp.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
 
 class ObserveConversationHistoryUseCase(
-    private val chatRepository: ChatRepository
+    private val chatRepository: ChatRepository,
 ) {
-    operator fun invoke(conversationId: Long): Flow<List<ChatMessage>> =
-        chatRepository.getMessages(conversationId)
+    operator fun invoke(conversationId: Long): Flow<List<ChatMessage>> = chatRepository.getMessages(conversationId)
 }

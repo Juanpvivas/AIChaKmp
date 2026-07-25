@@ -5,8 +5,7 @@ import com.juanpvivas.aichatjp.domain.repository.ConversationRepository
 import kotlinx.coroutines.flow.Flow
 
 class ObserveConversationsUseCase(
-    private val conversationRepository: ConversationRepository
+    private val conversationRepository: ConversationRepository,
 ) {
-    operator fun invoke(): Flow<List<Conversation>> =
-        conversationRepository.getConversations()
+    operator fun invoke(): Flow<List<Conversation>> = conversationRepository.getConversations()
 }

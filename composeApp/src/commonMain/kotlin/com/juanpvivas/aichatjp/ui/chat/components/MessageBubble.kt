@@ -29,65 +29,71 @@ import kotlinx.datetime.toLocalDateTime
 @Composable
 fun MessageBubble(
     message: ChatMessage,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val isUser = message.isFromUser
 
-    val bubbleShape = if (isUser) {
-        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 6.dp)
-    } else {
-        RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 6.dp, bottomEnd = 20.dp)
-    }
+    val bubbleShape =
+        if (isUser) {
+            RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 6.dp)
+        } else {
+            RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 6.dp, bottomEnd = 20.dp)
+        }
 
-    val bubbleColor = if (isUser) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.surfaceVariant
-    }
-    val textColor = if (isUser) {
-        MaterialTheme.colorScheme.onPrimary
-    } else {
-        MaterialTheme.colorScheme.onSurface
-    }
+    val bubbleColor =
+        if (isUser) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        }
+    val textColor =
+        if (isUser) {
+            MaterialTheme.colorScheme.onPrimary
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start,
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         if (!isUser) {
             AssistantAvatar()
         }
 
         Column(
-            horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
+            horizontalAlignment = if (isUser) Alignment.End else Alignment.Start,
         ) {
             Surface(
                 color = bubbleColor,
                 shape = bubbleShape,
                 tonalElevation = if (isUser) 0.dp else 1.dp,
-                modifier = Modifier
-                    .padding(start = if (isUser) 0.dp else 8.dp)
-                    .widthIn(max = 300.dp)
+                modifier =
+                    Modifier
+                        .padding(start = if (isUser) 0.dp else 8.dp)
+                        .widthIn(max = 300.dp),
             ) {
                 Text(
                     text = message.content,
                     color = textColor,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
                 )
             }
             Text(
                 text = formatTimestamp(message.timestamp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(
-                    top = 4.dp,
-                    start = if (isUser) 0.dp else 12.dp,
-                    end = if (isUser) 4.dp else 0.dp
-                )
+                modifier =
+                    Modifier.padding(
+                        top = 4.dp,
+                        start = if (isUser) 0.dp else 12.dp,
+                        end = if (isUser) 4.dp else 0.dp,
+                    ),
             )
         }
     }
@@ -96,17 +102,18 @@ fun MessageBubble(
 @Composable
 private fun AssistantAvatar() {
     Box(
-        modifier = Modifier
-            .size(32.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .size(32.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(MaterialTheme.colorScheme.primaryContainer),
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = Icons.Rounded.AutoAwesome,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.size(18.dp)
+            modifier = Modifier.size(18.dp),
         )
     }
 }

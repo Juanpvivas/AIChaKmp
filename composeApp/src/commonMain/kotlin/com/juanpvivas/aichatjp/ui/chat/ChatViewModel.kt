@@ -2,7 +2,6 @@ package com.juanpvivas.aichatjp.ui.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.juanpvivas.aichatjp.domain.model.ChatMessage
 import com.juanpvivas.aichatjp.domain.usecase.CreateConversationUseCase
 import com.juanpvivas.aichatjp.domain.usecase.ObserveConversationHistoryUseCase
 import com.juanpvivas.aichatjp.domain.usecase.SendMessageUseCase
@@ -15,9 +14,8 @@ import kotlinx.coroutines.launch
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
     private val observeConversationHistoryUseCase: ObserveConversationHistoryUseCase,
-    private val createConversationUseCase: CreateConversationUseCase
+    private val createConversationUseCase: CreateConversationUseCase,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow<ChatUiState>(ChatUiState.Empty)
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
@@ -27,25 +25,27 @@ class ChatViewModel(
         currentConversationId = conversationId
         viewModelScope.launch {
             observeConversationHistoryUseCase(conversationId).collect { messages ->
-                _uiState.value = if (messages.isEmpty()) {
-                    ChatUiState.Empty
-                } else {
-                    ChatUiState.Success(messages = messages)
-                }
+                _uiState.value =
+                    if (messages.isEmpty()) {
+                        ChatUiState.Empty
+                    } else {
+                        ChatUiState.Success(messages = messages)
+                    }
             }
         }
     }
 
     fun sendMessage(content: String) {
         viewModelScope.launch {
-            val conversationId = currentConversationId ?: run {
-                val title = content.take(50)
-                val result = createConversationUseCase(title)
-                val id = result.getOrNull() ?: return@launch
-                currentConversationId = id
-                loadConversation(id)
-                id
-            }
+            val conversationId =
+                currentConversationId ?: run {
+                    val title = content.take(50)
+                    val result = createConversationUseCase(title)
+                    val id = result.getOrNull() ?: return@launch
+                    currentConversationId = id
+                    loadConversation(id)
+                    id
+                }
 
             _uiState.update { state ->
                 if (state is ChatUiState.Success) state.copy(isLoading = true) else state

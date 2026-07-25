@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 class FakeConversationRepository : ConversationRepository {
-
     private val conversations = MutableStateFlow<List<Conversation>>(emptyList())
     private var nextId = 1L
 
