@@ -61,3 +61,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+
+dependencies {
+    add("kspAndroid", libs.room.compiler)
+}
