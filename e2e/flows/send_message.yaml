@@ -1,0 +1,15 @@
+appId: com.juanpvivas.aichatjp.iosApp
+---
+- launchApp
+- assertVisible: "AI Chat"
+- tapOn: "Escribe un mensaje…"
+- inputText: "hola"
+- tapOn: "Enviar"
+# El estado vacío ("Escribe un mensaje para empezar") solo se muestra cuando la
+# conversación no tiene mensajes; esperamos a que desaparezca para confirmar que
+# el mensaje realmente se agregó (no solo que el campo de texto se vació).
+- extendedWaitUntil:
+    notVisible: "Escribe un mensaje para empezar"
+    timeout: 15000
+- assertVisible: "hola"
+- assertVisible: "Escribe un mensaje…"

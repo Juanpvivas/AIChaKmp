@@ -109,7 +109,10 @@ fun ChatInputBar(
                     maxLines = 5,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                     keyboardActions = KeyboardActions(onSend = { submit() }),
-                    modifier = Modifier.heightIn(min = 24.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 24.dp),
                 )
             }
         }
