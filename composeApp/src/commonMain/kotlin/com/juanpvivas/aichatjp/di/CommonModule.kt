@@ -22,6 +22,8 @@ import org.koin.dsl.module
 
 val commonModule =
     module {
+        includes(groqConfigModule)
+
         singleOf(::ChatRemoteDataSourceImpl) bind ChatRemoteDataSource::class
 
         single {
