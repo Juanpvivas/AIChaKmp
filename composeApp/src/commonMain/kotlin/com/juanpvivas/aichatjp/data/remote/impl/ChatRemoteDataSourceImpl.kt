@@ -5,28 +5,24 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.client.OpenAIConfig
 import com.aallam.openai.client.OpenAIHost
-import com.juanpvivas.aichatjp.core.groqApiKey
 import com.juanpvivas.aichatjp.core.httpClientEngine
 import com.juanpvivas.aichatjp.data.remote.ChatRemoteDataSource
 import com.juanpvivas.aichatjp.data.remote.dto.SendMessageResponse
 import com.juanpvivas.aichatjp.data.remote.mapper.toChatMessage
 import com.juanpvivas.aichatjp.data.remote.mapper.toDto
+import com.juanpvivas.aichatjp.domain.config.GroqConfig
 import kotlin.time.Duration.Companion.seconds
 
-class ChatRemoteDataSourceImpl : ChatRemoteDataSource {
-    private companion object {
-        const val GROQ_BASE_URL = "https://api.groq.com/openai/v1/"
-        const val MODEL_ID = "llama-3.3-70b-versatile"
-        const val TIMEOUT_SECONDS = 60L
-    }
-
+class ChatRemoteDataSourceImpl(
+    private val groqConfig: GroqConfig,
+) : ChatRemoteDataSource {
     private val openAI: OpenAI by lazy {
         OpenAI(
             config =
                 OpenAIConfig(
-                    token = groqApiKey(),
-                    host = OpenAIHost(baseUrl = GROQ_BASE_URL),
-                    timeout = com.aallam.openai.api.http.Timeout(socket = TIMEOUT_SECONDS.seconds),
+                    token = groqConfig.getApiKey(),
+                    host = OpenAIHost(baseUrl = groqConfig.getBaseUrl()),
+                    timeout = com.aallam.openai.api.http.Timeout(socket = groqConfig.getTimeoutSeconds().seconds),
                     engine = httpClientEngine(),
                 ),
         )
@@ -34,10 +30,11 @@ class ChatRemoteDataSourceImpl : ChatRemoteDataSource {
 
     override suspend fun sendMessage(messages: List<String>): SendMessageResponse {
         val chatMessages = messages.map { it.toChatMessage() }
+        val modelId = groqConfig.resolveChatModel()
 
         val request =
             ChatCompletionRequest(
-                model = ModelId(MODEL_ID),
+                model = ModelId(modelId),
                 messages = chatMessages,
             )
 
