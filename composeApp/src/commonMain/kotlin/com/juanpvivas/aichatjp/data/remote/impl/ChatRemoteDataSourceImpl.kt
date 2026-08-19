@@ -16,7 +16,7 @@ import kotlin.time.Duration.Companion.seconds
 class ChatRemoteDataSourceImpl : ChatRemoteDataSource {
     private companion object {
         const val GROQ_BASE_URL = "https://api.groq.com/openai/v1/"
-        const val MODEL_ID = "llama-3.3-70b-versatile"
+        const val MODEL_ID = "qwen/qwen3.6-27b"
         const val TIMEOUT_SECONDS = 60L
     }
 
