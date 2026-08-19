@@ -7,14 +7,16 @@ import com.juanpvivas.aichatjp.core.groqApiKey
 import com.juanpvivas.aichatjp.core.httpClientEngine
 import com.juanpvivas.aichatjp.domain.config.GroqConfig
 import com.juanpvivas.aichatjp.domain.model.GroqModel
+import com.juanpvivas.aichatjp.domain.model.GroqPreferences
 import kotlin.time.Duration.Companion.seconds
 
-class GroqConfigImpl : GroqConfig {
+class GroqConfigImpl(
+    private val preferences: GroqPreferences = GroqPreferences(),
+    private val modelResolver: GroqModelResolver = GroqModelResolver(),
+) : GroqConfig {
     private companion object {
         const val GROQ_BASE_URL = "https://api.groq.com/openai/v1/"
-        const val DEFAULT_MODEL = "qwen/qwen3.6-27b"
         const val TIMEOUT_SECONDS = 60L
-        val EXCLUDED_MODEL_PATTERNS = listOf("whisper", "prompt-guard", "tts", "dall-e")
     }
 
     private var cachedModels: List<GroqModel>? = null
@@ -32,7 +34,13 @@ class GroqConfigImpl : GroqConfig {
     }
 
     override suspend fun getAvailableModels(): List<GroqModel> {
-        cachedModels?.let { return it }
+        if (!preferences.autoDetectModels) {
+            return emptyList()
+        }
+
+        if (preferences.cacheModels) {
+            cachedModels?.let { return it }
+        }
 
         return try {
             val models = openAI.models()
@@ -48,7 +56,9 @@ class GroqConfigImpl : GroqConfig {
                         maxCompletionTokens = 16384,
                     )
                 }
-            cachedModels = groqModels
+            if (preferences.cacheModels) {
+                cachedModels = groqModels
+            }
             groqModels
         } catch (e: Exception) {
             emptyList()
@@ -57,22 +67,7 @@ class GroqConfigImpl : GroqConfig {
 
     override suspend fun resolveChatModel(): String {
         val models = getAvailableModels()
-
-        if (models.isEmpty()) {
-            return DEFAULT_MODEL
-        }
-
-        val chatModel =
-            models.firstOrNull { model ->
-                model.isActive &&
-                    "text" in model.inputModalities &&
-                    "text" in model.outputModalities &&
-                    EXCLUDED_MODEL_PATTERNS.none { pattern ->
-                        model.id.contains(pattern, ignoreCase = true)
-                    }
-            }
-
-        return chatModel?.id ?: DEFAULT_MODEL
+        return modelResolver.resolveBestChatModel(models, preferences.preferredModelId)
     }
 
     override fun getApiKey(): String = groqApiKey()
