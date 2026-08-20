@@ -11,7 +11,7 @@ Este documento especifica el comportamiento y los detalles específicos de la **
 - Interfaz para iniciar y mantener conversaciones con la IA, implementada como Composables de **Compose Multiplatform** en `composeApp/src/commonMain/kotlin/.../ui/chat/`, compartidos sin cambios entre Android e iOS.
 - Flujo síncrono visual: por cada mensaje enviado por el usuario, la IA debe devolver una respuesta en pantalla.
 - **Validación (Android):** este flujo tiene un Journey (Android CLI) que lo cubre — `composeApp/src/androidInstrumentedTest/journey/send_message.xml` — que verifica la pantalla de chat, el envío de un mensaje y la aparición de la respuesta/loading. Ver `ARCHITECTURE.md` §12.2 para el detalle de la herramienta.
-- **Validación (iOS):** no existe hoy una herramienta equivalente a Journeys; este flujo se valida manualmente en simulador/dispositivo antes de cada release hasta que se resuelva el punto abierto en `ARCHITECTURE.md` §16.
+- **Validación (iOS):** este flujo tiene un flow de Maestro que lo cubre — `e2e/flows/send_message.yaml` — que verifica la pantalla de chat, el envío de un mensaje y la aparición de la respuesta. Ver `ARCHITECTURE.md` §12.3 para el detalle de la herramienta.
 
 ### 1.2. Contexto de la conversación
 

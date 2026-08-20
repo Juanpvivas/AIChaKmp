@@ -153,12 +153,23 @@ La mayor parte de la suite de tests vive en `commonTest` y corre en ambas plataf
 ./gradlew :composeApp:allTests   # corre commonTest + androidUnitTest
 ```
 
-Además, los flujos críticos de UI en Android se validan con **Journeys** (Android CLI + Gemini): descripciones en lenguaje natural que un agente de IA ejecuta directamente sobre la app, tomando screenshots y verificando el resultado en pantalla. Esta herramienta es hoy **exclusiva de Android**; no existe aún una cobertura E2E automatizada equivalente para iOS (ver el punto abierto en `ARCHITECTURE.md` §16), por lo que los flujos críticos en iOS se validan manualmente antes de cada release.
+Además, los flujos críticos de UI se validan con pruebas end-to-end:
 
-- Los archivos de journey (`.xml`) viven en `composeApp/src/androidInstrumentedTest/journey/`.
-- Se ejecutan pidiéndole al agente de IA (Android CLI) que localice la carpeta y corra el journey correspondiente sobre un emulador/dispositivo.
+**Android (Journeys):**
+- Descripciones en lenguaje natural ejecutadas por Android CLI + Gemini
+- Los archivos de journey (`.xml`) viven en `composeApp/src/androidInstrumentedTest/journey/`
+- Más detalle en [ARCHITECTURE.md](./ARCHITECTURE.md) §12.2
 
-Más detalle de la herramienta en [ARCHITECTURE.md](./ARCHITECTURE.md) §12.2.
+**iOS (Maestro):**
+- Flujos YAML declarativos, cross-platform
+- Los archivos de flow (`.yaml`) viven en `e2e/flows/`
+- Más detalle en [ARCHITECTURE.md](./ARCHITECTURE.md) §12.3
+
+```bash
+# Ejecutar pruebas E2E de iOS
+maestro test e2e/flows/send_message.yaml
+maestro test e2e/flows/
+```
 
 ---
 

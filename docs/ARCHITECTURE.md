@@ -412,7 +412,7 @@ val commonModule = module {
 | Específico Android (si no se puede fakear en común) | `androidUnitTest` | JUnit + MockK | Casos que dependan de detalles JVM/Android puntuales |
 | UI Compose (Android) | `androidInstrumentedTest` | Compose Testing | Estados principales renderizados correctamente, interacciones clave |
 | Flujos end-to-end (Android) | `androidInstrumentedTest` | Android CLI + Journeys (Gemini) | Journeys en lenguaje natural que navegan la app como lo haría un usuario real (ver §12.2) — herramienta Android-only |
-| UI/E2E iOS | Pendiente (ver §16) | Maestro (recomendado) | YAML declarativo, cross-platform, similar filosofía a Journeys (ver spike en `docs/SPIKE-ios-e2e-testing.md`) |
+| Flujos end-to-end (iOS) | `e2e/` | Maestro | YAML declarativo, cross-platform, similar filosofía a Journeys (ver §12.3) |
 
 - **Preferir fakes sobre mocks** en `commonTest`, ya que MockK es JVM-only y no está disponible en `iosTest`. Un mock real multiplatform (si se necesita) puede evaluarse con librerías como `mokkery`, pero el default del proyecto es usar fakes escritos a mano.
 - Los fakes/mocks compartidos entre features se agrupan en un paquete de testing común (ej. `commonTest/.../testutil/` o `data/repository/fake/`) para no duplicarlos.
@@ -445,7 +445,59 @@ Además de los tests unitarios/instrumentados, el proyecto usa **Journeys** (fun
 - Los archivos `.xml` de journeys viven en `composeApp/src/androidInstrumentedTest/journey/`.
 - Se ejecutan pidiéndole al agente de IA (Android CLI) que localice la carpeta y corra el journey correspondiente sobre un emulador/dispositivo. Al estar dentro de `androidInstrumentedTest`, quedan disponibles para correrse vía Gradle si se decide integrarlos a CI más adelante.
 - **Nomenclatura por journey:** un archivo por flujo crítico de usuario (ej. `send_message.xml`, `select_previous_conversation.xml`, `start_new_conversation.xml`).
-- **iOS:** hasta que se defina una herramienta equivalente (ver §14), la validación end-to-end de flujos críticos en iOS es manual antes de cada release.
+- **iOS:** la validación end-to-end de flujos críticos en iOS se realiza con Maestro (ver §12.3).
+
+### 12.3. Testing con Maestro (iOS E2E)
+
+El proyecto usa **Maestro** para validar flujos completos de UI en iOS. Maestro es una herramienta de testing E2E que usa YAML declarativo, similar en filosofía a los Journeys de Android.
+
+- Los archivos `.yaml` de flows viven en `e2e/flows/`.
+- Se ejecutan con el CLI de Maestro sobre un simulador o dispositivo iOS.
+- **Nomenclatura por flow:** un archivo por flujo crítico de usuario (ej. `send_message.yaml`).
+
+**Estructura:**
+
+```text
+e2e/
+├── README.md              # Documentación de las pruebas
+└── flows/
+    └── send_message.yaml  # Flujo de envío de mensajes
+```
+
+**Ejecución:**
+
+```bash
+# Instalar Maestro CLI
+curl -fsSL "https://get.maestro.mobile.dev" | bash
+
+# Iniciar simulador iOS
+open -a Simulator
+
+# Ejecutar un flow específico
+maestro test e2e/flows/send_message.yaml
+
+# Ejecutar todos los flows
+maestro test e2e/flows/
+```
+
+**Ejemplo de flow (`send_message.yaml`):**
+
+```yaml
+appId: com.juanpvivas.aichatjp.iosApp
+---
+- launchApp
+- assertVisible: "AI Chat"
+- tapOn: "Escribe un mensaje…"
+- inputText: "hola"
+- tapOn: "Enviar"
+- extendedWaitUntil:
+    notVisible: "Escribe un mensaje para empezar"
+    timeout: 15000
+- assertVisible: "hola"
+- assertVisible: "Escribe un mensaje…"
+```
+
+Para más detalles, ver `e2e/README.md` y `docs/SPIKE-ios-e2e-testing.md`.
 
 ---
 
@@ -493,7 +545,7 @@ Pipeline mínimo sugerido (a adaptar al proveedor real). A diferencia del pipeli
 
 - [ ] Estrategia de expiración/límite del historial de conversaciones (¿se guarda indefinidamente? ¿hay límite de mensajes o de conversaciones?).
 - [ ] Comportamiento ante error de la API de Groq a mitad de una respuesta en streaming (si se implementa streaming a futuro).
-- [x] Herramienta de validación E2E para iOS equivalente a Journeys — **Recomendación: adoptar Maestro** (ver `docs/SPIKE-ios-e2e-testing.md`). YAML declarativo, cross-platform, similar filosofía a Journeys. Implementación pendiente.
+- [x] Herramienta de validación E2E para iOS equivalente a Journeys — **Implementado con Maestro** (ver §12.3 y `e2e/`). YAML declarativo, cross-platform, similar filosofía a Journeys.
 - [ ] Confirmar librería de logging multiplatform definitiva (Kermit vs. logger propio `expect`/`actual`).
 - [ ] Evaluar cifrado de la base de datos local (Room) si el historial se considera dato sensible.
 - [ ] Plan de migración incremental: orden en que se migran las features existentes (Chat, History) de Hilt/Android-only a Koin/`commonMain`, y cómo conviven ambos enfoques durante la transición.
