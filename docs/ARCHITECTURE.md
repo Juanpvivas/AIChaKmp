@@ -306,10 +306,99 @@ ui/
 
 ## 11. Integración con Groq
 
-- El cliente de IA vive en `data/remote/` (`commonMain`), usando el SDK `openai-kotlin` apuntando al endpoint compatible de Groq. Al estar construido sobre Ktor, el SDK es multiplatform sin cambios de código entre Android e iOS; solo cambia el `HttpClientEngine` inyectado (`OkHttp` vs `Darwin`, ver §4).
-- El repositorio de chat es responsable de construir el contexto histórico completo de la conversación antes de cada llamada (ver `SPEC.md` para el detalle de comportamiento de esta feature).
-- Errores de red/API (timeout, rate limit, error de modelo) se normalizan en `AppError` antes de llegar al ViewModel; el ViewModel decide cómo se traduce a `UiState.Error`.
-- La API Key de Groq nunca se hardcodea: se resuelve vía `expect fun groqApiKey(): String` (ver §4), leída desde `local.properties`/`BuildConfig` en Android y desde `Info.plist`/`Config.xcconfig` en iOS. Nunca se sube al repositorio en ninguna de las dos plataformas (ver §13).
+### 11.1. Arquitectura de configuración
+
+La integración con Groq utiliza una capa de configuración centralizada que maneja la detección automática de modelos y la configuración de la API.
+
+```text
+domain/
+├── config/
+│   └── GroqConfig.kt              # Interfaz de configuración centralizada
+└── model/
+    ├── GroqModel.kt                # Modelo de dominio para representar modelos disponibles
+    └── GroqPreferences.kt          # Preferencias de configuración manual
+
+data/remote/
+├── config/
+│   ├── GroqConfigImpl.kt           # Implementación de GroqConfig
+│   └── GroqModelResolver.kt        # Lógica de resolución inteligente de modelos
+└── impl/
+    └── ChatRemoteDataSourceImpl.kt # Usa GroqConfig para configuración
+```
+
+### 11.2. Componentes principales
+
+**GroqConfig** (`domain/config/GroqConfig.kt`):
+- Interfaz que define el contrato de configuración de Groq
+- Métodos: `getAvailableModels()`, `resolveChatModel()`, `getApiKey()`, `getBaseUrl()`, `getTimeoutSeconds()`
+- Permite inyección de dependencias y testing
+
+**GroqModel** (`domain/model/GroqModel.kt`):
+- Modelo de dominio que representa un modelo disponible en Groq
+- Propiedades: `id`, `name`, `isActive`, `inputModalities`, `outputModalities`, `contextWindow`, `maxCompletionTokens`
+
+**GroqPreferences** (`domain/model/GroqPreferences.kt`):
+- Configuración manual de preferencias
+- `preferredModelId`: Override manual de modelo
+- `autoDetectModels`: Habilitar/deshabilitar detección automática
+- `cacheModels`: Habilitar/deshabilitar caché de modelos
+
+**GroqModelResolver** (`data/remote/config/GroqModelResolver.kt`):
+- Lógica de resolución inteligente de modelos
+- Filtra modelos no-chat (whisper, prompt-guard, tts, dall-e)
+- Selecciona el mejor modelo basado en contexto y preferencias de proveedor
+- Soporta preferencia manual de modelo
+
+**GroqConfigImpl** (`data/remote/config/GroqConfigImpl.kt`):
+- Implementación de GroqConfig
+- Consulta la API de Groq para obtener modelos disponibles
+- Usa GroqModelResolver para selección de modelos
+- Soporta caché en memoria
+
+### 11.3. Flujo de resolución de modelos
+
+1. Al enviar un mensaje, `ChatRemoteDataSourceImpl` llama a `groqConfig.resolveChatModel()`
+2. `GroqConfigImpl` consulta la API de Groq para obtener modelos disponibles (con caché)
+3. `GroqModelResolver` filtra y selecciona el mejor modelo basado en:
+   - Preferencia manual (si está configurada)
+   - Modalidades de input/output (solo texto)
+   - Exclusión de modelos no-chat
+   - Preferencia de proveedor (qwen > llama > mixtral > gemma)
+   - Tamaño de contexto
+4. Si no hay modelos disponibles, se usa el modelo por defecto (`qwen/qwen3.6-27b`)
+
+### 11.4. Configuración de la API
+
+- El cliente de IA vive en `data/remote/` (`commonMain`), usando el SDK `openai-kotlin` apuntando al endpoint compatible de Groq
+- Al estar construido sobre Ktor, el SDK es multiplatform sin cambios de código entre Android e iOS; solo cambia el `HttpClientEngine` inyectado (`OkHttp` vs `Darwin`, ver §4)
+- El repositorio de chat es responsable de construir el contexto histórico completo de la conversación antes de cada llamada (ver `SPEC.md` para el detalle de comportamiento de esta feature)
+- Errores de red/API (timeout, rate limit, error de modelo) se normalizan en `AppError` antes de llegar al ViewModel; el ViewModel decide cómo se traduce a `UiState.Error`
+- La API Key de Groq nunca se hardcodea: se resuelve vía `expect fun groqApiKey(): String` (ver §4), leída desde `local.properties`/`BuildConfig` en Android y desde `Info.plist`/`Config.xcconfig` en iOS. Nunca se sube al repositorio en ninguna de las dos plataformas (ver §13)
+
+### 11.5. Ejemplo de uso
+
+```kotlin
+// En ChatRemoteDataSourceImpl
+class ChatRemoteDataSourceImpl(
+    private val groqConfig: GroqConfig,
+) : ChatRemoteDataSource {
+    override suspend fun sendMessage(messages: List<String>): SendMessageResponse {
+        val modelId = groqConfig.resolveChatModel() // Resolución automática
+        val request = ChatCompletionRequest(
+            model = ModelId(modelId),
+            messages = messages.map { it.toChatMessage() },
+        )
+        // ...
+    }
+}
+
+// En CommonModule.kt
+val commonModule = module {
+    includes(groqConfigModule)
+    singleOf(::ChatRemoteDataSourceImpl) bind ChatRemoteDataSource::class
+    // ...
+}
+```
 
 ---
 

@@ -69,7 +69,31 @@ GROQ_API_KEY = TU_API_KEY_DE_GROQ_AQUI
 
 Xcode inyecta esto en `Info.plist`, y el código Kotlin compartido lo lee en tiempo de ejecución a través de la implementación específica de plataforma de `groqApiKey()` (ver `ARCHITECTURE.md` §4). Nunca hardcodees la API Key en archivos fuente de Swift/Kotlin.
 
-### 5. Compilar y Ejecutar — Android
+### 5. Configuración del Modelo de Groq (Opcional)
+
+La app detecta automáticamente los modelos disponibles en Groq. No se necesita configuración manual en la mayoría de los casos.
+
+**Cómo funciona:**
+- La app consulta la API de Groq para encontrar modelos de chat disponibles
+- Filtra modelos que no son de chat (audio, seguridad, etc.)
+- Selecciona el mejor modelo basado en preferencia de proveedor y tamaño de contexto
+- Usa `qwen/qwen3.6-27b` como fallback si no encuentra modelos
+
+**Configuración manual (opcional):**
+
+Si quieres usar un modelo específico, puedes configurarlo en `GroqPreferences`:
+
+```kotlin
+val preferences = GroqPreferences(
+    preferredModelId = "llama3-70b-8192",  // Tu modelo preferido
+    autoDetectModels = true,
+    cacheModels = true
+)
+```
+
+Para más detalles, ver [Guía de Configuración de Groq](GROQ_CONFIGURATION.md).
+
+### 6. Compilar y Ejecutar — Android
 
 1. Abre el proyecto en Android Studio.
 2. Deja que Gradle sincronice las dependencias (`Sync Project with Gradle Files`).
