@@ -34,6 +34,19 @@ Este documento especifica el comportamiento y los detalles específicos de la **
 - El SDK está construido sobre Ktor, por lo que es multiplatform sin cambios de código funcional entre Android e iOS; solo cambia el `HttpClientEngine` resuelto vía `expect`/`actual` (`OkHttp` en Android, `Darwin` en iOS — ver `ARCHITECTURE.md` §4).
 - El cliente se configura apuntando al `baseUrl` de Groq (no al de OpenAI) y con la API Key de Groq, resuelta también vía `expect`/`actual` (`ARCHITECTURE.md` §4 y §15) según la plataforma.
 
+### 2.1. Detección automática de modelos
+
+La app utiliza una capa de configuración centralizada que detecta automáticamente los modelos disponibles en Groq:
+
+- **Resolución dinámica:** El modelo de chat se resuelve en cada mensaje mediante `GroqConfig.resolveChatModel()`, no está hardcodeado
+- **Filtrado inteligente:** Se excluyen modelos no-chat (whisper, prompt-guard, tts, dall-e)
+- **Preferencias de proveedor:** Se prefiere modelos de qwen > llama > mixtral > gemma
+- **Fallback automático:** Si no hay modelos disponibles, se usa `qwen/qwen3.6-27b` como modelo por defecto
+- **Caché en memoria:** Los modelos disponibles se cachean para evitar consultas repetidas a la API
+- **Configuración manual:** Es posible configurar un modelo preferido mediante `GroqPreferences`
+
+Para más detalles sobre la arquitectura de configuración, ver `ARCHITECTURE.md` §11.
+
 ---
 
 ## 3. Pantallas y capas involucradas
