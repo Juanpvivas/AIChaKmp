@@ -79,6 +79,8 @@ AICha-KMP/
 
 **Regla clave:** `iosApp/` (Swift) no contiene lógica de negocio ni de presentación — es un wrapper mínimo que arranca Koin (`initKoin()`) y monta la UI de Compose Multiplatform expuesta por `composeApp`. Toda pantalla, estado y lógica vive en Kotlin dentro de `composeApp`.
 
+**Ciclo de vida iOS:** `AppDelegate` inicializa Koin una sola vez por proceso. `SceneDelegate` (en `App.swift`) crea la `UIWindow` asociada a la `UIWindowScene` y monta `MainViewController`. `Info.plist` registra esta escena con `UIApplicationSceneManifest` y mantiene una sola ventana. La generación automática de este manifiesto está desactivada en Debug y Release para evitar que Xcode lo reemplace por una configuración vacía. Esta configuración permite arrancar con el SDK de iOS 27, que exige el ciclo de vida basado en escenas, y sigue siendo compatible con el deployment target iOS 16. Android conserva su propio punto de entrada. El flujo `e2e/flows/scene_lifecycle.yaml` comprueba arranque, regreso desde segundo plano y relanzamiento.
+
 ### 3.2 Capas de Clean Architecture
 
 ```text
