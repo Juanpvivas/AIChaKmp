@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated testing documentation to reflect iOS E2E implementation
 
 ### Fixed
+- iOS 27 launch crash by adopting the UIKit scene lifecycle in the iOS entry point
 - API key configuration issues with Groq model availability
 
 ## [1.0.0] - 2026-07-25

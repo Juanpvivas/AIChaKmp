@@ -1,0 +1,11 @@
+appId: com.juanpvivas.aichatjp.iosApp
+---
+- launchApp
+- assertVisible: "AI Chat"
+- pressKey: home
+- launchApp:
+    stopApp: false
+- assertVisible: "AI Chat"
+- stopApp
+- launchApp
+- assertVisible: "AI Chat"

@@ -48,6 +48,7 @@ maestro test e2e/flows/
 | Flow | Description |
 |------|-------------|
 | `send_message.yaml` | Sends a message and verifies AI response |
+| `scene_lifecycle.yaml` | Verifies cold launch, return from background, and relaunch without clearing data |
 
 ## Writing New Flows
 
